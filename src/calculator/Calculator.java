@@ -222,7 +222,7 @@ public class Calculator extends JFrame {
         buttons.add(new CalculatorButton("sin", "sin",   new Color(239, 245, 135)));
         buttons.add(new CalculatorButton("cos", "cos",   new Color(239, 245, 135)));
         buttons.add(new CalculatorButton("tan", "tan",   new Color(239, 245, 135)));
-        buttons.add(new CalculatorButton("atan", "atan", new Color(239, 245, 135)));
+        buttons.add(new CalculatorButton("ctg", "ctg", new Color(239, 245, 135)));
         return buttons;
     }
 
