@@ -7,6 +7,7 @@ class CalculatorButton {
     private final String title;
     private final String value;
     private final Color backgroundColor;
+    public boolean isActionButton = false;
 
     public final JButton jButton = new JButton();
 
@@ -17,12 +18,14 @@ class CalculatorButton {
         this.title = title;
         this.value = value;
         this.backgroundColor = backgroundColor;
+        setButton();
     }
-    public CalculatorButton(String title, String value, Color backgroundColor, Dimension size) {
+    public CalculatorButton(String title, String value, Color backgroundColor, boolean isActionButton) {
         this.title = title;
         this.value = value;
         this.backgroundColor = backgroundColor;
-        this.size = size;
+        this.isActionButton = isActionButton;
+        setButton();
     }
 
     public String getTitle() {

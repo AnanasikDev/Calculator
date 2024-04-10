@@ -10,8 +10,6 @@ public class Calculator extends JFrame {
     private JTextField textField;
     private Solver solver;
     private JPanel mainPanel;
-    private JPanel ansPanel; // includes only button ANS
-    private JButton ansButton;
     private JPanel keyboardPanel; // includes all keys of calculator, exluding ANS
     private JPanel buttonPanel; // includes keyboard panel and ansPanel
     private JPanel historyPanel;
@@ -27,11 +25,6 @@ public class Calculator extends JFrame {
     private int getRows() { return (int)Math.ceil(calculatorButtons.size() / (float)columns);};
 
     private void UpdateOnWindowResize(){
-        ansPanel.setPreferredSize(new Dimension(keyboardPanel.getWidth() / 5 - keyboardPadding, keyboardPanel.getHeight() - keyboardPadding));
-        int ansFont = (int) (mainPanel.getWidth() * 0.025);
-        ansButton.setPreferredSize(new Dimension(ansPanel.getWidth(), ansPanel.getHeight()));
-        ansButton.setFont(new Font(fontName, Font.PLAIN, ansFont));
-
         System.out.println(mainPanel.getWidth());
         if (mainPanel.getWidth() < 500){
             historyPanel.setPreferredSize(new Dimension(0, mainPanel.getHeight()));
@@ -75,21 +68,6 @@ public class Calculator extends JFrame {
             }
         });
     }
-    private void InitAnsPanel(){
-        ansPanel = new JPanel(new GridLayout(1, 1));
-        buttonPanel.add(ansPanel, BorderLayout.WEST);
-        ansButton = new JButton("ANS");
-        ansButton.setBackground(new Color(100, 150, 200));
-        ansButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                textField.requestFocus();
-            }
-        });
-
-        ansPanel.setBackground(Color.black);
-        ansPanel.add(ansButton);
-    }
     private void InitButtonPanel(){
         keyboardPanel = new JPanel();
 
@@ -109,7 +87,7 @@ public class Calculator extends JFrame {
 
         List<CalculatorButton> buttons = getCalculatorButtons();
         int i = 0;
-        int columns = 4;
+        int columns = 5;
         for (CalculatorButton button : buttons) {
             button.setButton();
             JButton jButton = button.getButton();
@@ -124,7 +102,7 @@ public class Calculator extends JFrame {
                 }
             });
 
-            jButton.addActionListener(new ButtonClickListener(button));
+            jButton.addActionListener(new ButtonClickListener(button, button.isActionButton));
             constraints.fill = GridBagConstraints.HORIZONTAL;
             constraints.weightx = 0.5;
             constraints.gridx = i % columns;
@@ -158,16 +136,7 @@ public class Calculator extends JFrame {
         buttonPanel = new JPanel();
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
-        InitAnsPanel();
-
         InitButtonPanel();
-
-        ansButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                textField.setText(textField.getText() + (history.isEmpty() ? "" : history.get(history.size()-1).getValue()));
-            }
-        });
 
         mainPanel.addComponentListener(new ComponentAdapter() {
             @Override
@@ -228,65 +197,117 @@ public class Calculator extends JFrame {
 
     private List<CalculatorButton> getCalculatorButtons() {
         List<CalculatorButton> buttons = new ArrayList<>();
+        buttons.add(new CalculatorButton("=", "", new Color(217, 137, 91), true));
+        buttons.getLast().jButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                evaluate();
+            }
+        });
+
+        buttons.add(new CalculatorButton("C", "", new Color(117, 117, 117), true));
+        buttons.getLast().jButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                textField.setText("");
+            }
+        });
+
+        buttons.add(new CalculatorButton("ANS", "", new Color(117, 117, 117), true));
+        buttons.getLast().jButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                textField.setText(textField.getText() + (history.isEmpty() ? "" : history.get(history.size()-1).getValue()));
+            }
+        });
+
+        buttons.add(new CalculatorButton("<-", "", new Color(117, 117, 117), true));
+        buttons.getLast().jButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                textField.setText(textField.getText().isEmpty() ? "" : textField.getText().substring(0, textField.getText().length()-1) );
+            }
+        });
+
+        buttons.add(new CalculatorButton("last", "", new Color(117, 117, 117), true));
+        buttons.getLast().jButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                textField.setText(textField.getText() + (history.isEmpty() ? "" : history.get(history.size()-1).getExpression()));
+            }
+        });
+
+        buttons.add(new CalculatorButton(".", ".", new Color(200, 200, 200)));
         buttons.add(new CalculatorButton("1", "1", new Color(135, 222, 184)));
         buttons.add(new CalculatorButton("2", "2", new Color(135, 222, 184)));
         buttons.add(new CalculatorButton("3", "3", new Color(135, 222, 184)));
         buttons.add(new CalculatorButton("+", "+", new Color(150, 136, 186)));
+
+        buttons.add(new CalculatorButton("(", "(", new Color(200, 200, 200)));
         buttons.add(new CalculatorButton("4", "4", new Color(135, 222, 184)));
         buttons.add(new CalculatorButton("5", "5", new Color(135, 222, 184)));
         buttons.add(new CalculatorButton("6", "6", new Color(135, 222, 184)));
         buttons.add(new CalculatorButton("-", "-", new Color(150, 136, 186)));
+
+        buttons.add(new CalculatorButton(")", ")", new Color(200, 200, 200)));
         buttons.add(new CalculatorButton("7", "7", new Color(135, 222, 184)));
         buttons.add(new CalculatorButton("8", "8", new Color(135, 222, 184)));
         buttons.add(new CalculatorButton("9", "9", new Color(135, 222, 184)));
         buttons.add(new CalculatorButton("×", "*", new Color(150, 136, 186)));
-        buttons.add(new CalculatorButton("C", "C", new Color(117, 117, 117)));
-        buttons.add(new CalculatorButton("0", "0", new Color(135, 222, 184)));
-        buttons.add(new CalculatorButton("=", "=", new Color(217, 137, 91)));
-        buttons.add(new CalculatorButton("/", "/", new Color(150, 136, 186)));
-        buttons.add(new CalculatorButton("(", "(", new Color(200, 200, 200)));
-        buttons.add(new CalculatorButton(")", ")", new Color(200, 200, 200)));
-        buttons.add(new CalculatorButton(".", ".", new Color(200, 200, 200)));
+
         buttons.add(new CalculatorButton("!", "!", new Color(200, 200, 200)));
+        buttons.add(new CalculatorButton("__", " ", new Color(135, 222, 184)));
+        buttons.add(new CalculatorButton("0", "0", new Color(135, 222, 184)));
+        buttons.add(new CalculatorButton("-", "", new Color(135, 222, 184), true));
+        buttons.getLast().jButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                textField.setText("-(" + textField.getText() + ")");
+            }
+        });
+
+        buttons.add(new CalculatorButton("/", "/", new Color(150, 136, 186)));
+
         buttons.add(new CalculatorButton("π", "pi",new Color(245, 135, 219)));
-        buttons.add(new CalculatorButton("e", "e",       new Color(245, 135, 219)));
-        buttons.add(new CalculatorButton("g", "[g]",       new Color(245, 135, 219)));
-        buttons.add(new CalculatorButton("φ", "[phi]",       new Color(245, 135, 219)));
         buttons.add(new CalculatorButton("x^y", "^",     new Color(150, 136, 186)));
         buttons.add(new CalculatorButton("x²", "^2",     new Color(150, 136, 186)));
-        buttons.add(new CalculatorButton("sqrt", "sqrt", new Color(150, 136, 186)));
+        buttons.add(new CalculatorButton("sqrt", "sqrt(", new Color(150, 136, 186)));
         buttons.add(new CalculatorButton("root", "^(1/", new Color(150, 136, 186)));
+
+        buttons.add(new CalculatorButton("e", "e",       new Color(245, 135, 219)));
         buttons.add(new CalculatorButton("sin", "sin",   new Color(239, 245, 135)));
         buttons.add(new CalculatorButton("cos", "cos",   new Color(239, 245, 135)));
         buttons.add(new CalculatorButton("tan", "tan",   new Color(239, 245, 135)));
         buttons.add(new CalculatorButton("ctg", "ctg", new Color(239, 245, 135)));
+
+        buttons.add(new CalculatorButton("g", "[g]",       new Color(245, 135, 219)));
         buttons.add(new CalculatorButton("asin", "asin",   new Color(239, 245, 135)));
         buttons.add(new CalculatorButton("acos", "acos",   new Color(239, 245, 135)));
         buttons.add(new CalculatorButton("atan", "atan",   new Color(239, 245, 135)));
         buttons.add(new CalculatorButton("actg", "actg", new Color(239, 245, 135)));
+
+        buttons.add(new CalculatorButton("φ", "[phi]",       new Color(245, 135, 219)));
         buttons.add(new CalculatorButton("ln", "ln", new Color(135, 245, 179)));
         buttons.add(new CalculatorButton("log10", "log10", new Color(135, 245, 179)));
         buttons.add(new CalculatorButton("log2", "log2", new Color(135, 245, 179)));
         buttons.add(new CalculatorButton("log", "log(_, _)", new Color(135, 245, 179)));
+
         return buttons;
     }
 
     private class ButtonClickListener implements ActionListener {
         private final CalculatorButton button;
+        public boolean isActionButton = false;
 
-        public ButtonClickListener(CalculatorButton button) {
+        public ButtonClickListener(CalculatorButton button, boolean isActionButton) {
             this.button = button;
+            this.isActionButton = isActionButton;
         }
 
         public void actionPerformed(ActionEvent e) {
             String command = button.getValue();
-            if ("=".equals(command)) {
-                evaluate();
-            } else if ("C".equals(command)) {
-                textField.setText("");
-            } else {
+            if (!isActionButton)
                 textField.setText(textField.getText() + command);
-            }
         }
     }
 
