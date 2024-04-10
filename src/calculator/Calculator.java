@@ -130,6 +130,8 @@ public class Calculator extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
+        solver = new Solver();
+
         mainPanel = new JPanel();
         InitTextField();
 
@@ -159,7 +161,6 @@ public class Calculator extends JFrame {
 
         pack();
 
-        solver = new Solver();
 
         UpdateOnWindowResize();
     }
@@ -213,19 +214,19 @@ public class Calculator extends JFrame {
             }
         });
 
-        buttons.add(new CalculatorButton("ANS", "", new Color(117, 117, 117), true));
-        buttons.getLast().jButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                textField.setText(textField.getText() + (history.isEmpty() ? "" : history.get(history.size()-1).getValue()));
-            }
-        });
-
-        buttons.add(new CalculatorButton("<-", "", new Color(117, 117, 117), true));
+        buttons.add(new CalculatorButton("del", "", new Color(117, 117, 117), true));
         buttons.getLast().jButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 textField.setText(textField.getText().isEmpty() ? "" : textField.getText().substring(0, textField.getText().length()-1) );
+            }
+        });
+
+        buttons.add(new CalculatorButton("ans", "", new Color(117, 117, 117), true));
+        buttons.getLast().jButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                textField.setText(textField.getText() + (history.isEmpty() ? "" : history.get(history.size()-1).getValue()));
             }
         });
 
@@ -237,7 +238,15 @@ public class Calculator extends JFrame {
             }
         });
 
-        buttons.add(new CalculatorButton(".", ".", new Color(200, 200, 200)));
+        buttons.add(new CalculatorButton(solver.degMod ? "deg" : "rad", "", new Color(117, 117, 117), true));
+        buttons.getLast().jButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                solver.setDegMod(!solver.degMod);
+                ((JButton)(e.getSource())).setText(solver.degMod ? "deg" : "rad");
+            }
+        });
+
         buttons.add(new CalculatorButton("1", "1", new Color(135, 222, 184)));
         buttons.add(new CalculatorButton("2", "2", new Color(135, 222, 184)));
         buttons.add(new CalculatorButton("3", "3", new Color(135, 222, 184)));
@@ -256,7 +265,7 @@ public class Calculator extends JFrame {
         buttons.add(new CalculatorButton("×", "*", new Color(150, 136, 186)));
 
         buttons.add(new CalculatorButton("!", "!", new Color(200, 200, 200)));
-        buttons.add(new CalculatorButton("__", " ", new Color(135, 222, 184)));
+        buttons.add(new CalculatorButton(".", ".", new Color(135, 222, 184)));
         buttons.add(new CalculatorButton("0", "0", new Color(135, 222, 184)));
         buttons.add(new CalculatorButton("-", "", new Color(135, 222, 184), true));
         buttons.getLast().jButton.addActionListener(new ActionListener() {
