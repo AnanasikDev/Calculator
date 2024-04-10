@@ -23,14 +23,26 @@ public class Calculator extends JFrame {
 
     private List<CalculatorButton> calculatorButtons = new ArrayList<>();
 
+    private final int columns = 4;
+    private int getRows() { return (int)Math.ceil(calculatorButtons.size() / (float)columns);};
+
     private void UpdateOnWindowResize(){
         ansPanel.setPreferredSize(new Dimension(keyboardPanel.getWidth() / 5 - keyboardPadding, keyboardPanel.getHeight() - keyboardPadding));
         int ansFont = (int) (mainPanel.getWidth() * 0.025);
         ansButton.setPreferredSize(new Dimension(ansPanel.getWidth(), ansPanel.getHeight()));
         ansButton.setFont(new Font(fontName, Font.PLAIN, ansFont));
 
+        System.out.println(mainPanel.getWidth());
+        if (mainPanel.getWidth() < 500){
+            historyPanel.setPreferredSize(new Dimension(0, mainPanel.getHeight()));
+            historyPanel.setVisible(false);
+        }
+        else{
+            historyPanel.setVisible(true);
+        }
+
         for (CalculatorButton jButton : calculatorButtons){
-            int newSize = (int) (mainPanel.getWidth() * 0.06);
+            int newSize = (int) (Math.pow(mainPanel.getWidth() + mainPanel.getHeight(), 0.45));
             jButton.getButton().setFont(new Font(fontName, Font.PLAIN, newSize));
         }
 
@@ -43,6 +55,7 @@ public class Calculator extends JFrame {
     private void InitTextField(){
         textField = new JTextField();
         textField.setEditable(true);
+        textField.setHorizontalAlignment(0);
         mainPanel.add(textField);
         textField.addKeyListener(new KeyAdapter() {
             @Override
@@ -81,14 +94,28 @@ public class Calculator extends JFrame {
         keyboardPanel = new JPanel();
 
         // MAIN PANEL grid layout settings
-        keyboardPanel.setLayout(new GridLayout(7, 4, keyboardPadding, keyboardPadding));
+        //keyboardPanel.setLayout(new GridLayout(getRows(), columns, keyboardPadding, keyboardPadding));
+        keyboardPanel.setLayout(new GridBagLayout());
+
+        GridBagConstraints constraints = new GridBagConstraints();
+        //constraints.gridx = 500;
+        //constraints.gridy = 500;
+        constraints.gridwidth = 1;
+        constraints.gridheight = 1;
+        constraints.fill =  GridBagConstraints.CENTER;
+        //constraints.fill = GridBagConstraints.HORIZONTAL;
+        /*constraints.weightx = 0.1;
+        constraints.weighty = 0.1;*/
 
         List<CalculatorButton> buttons = getCalculatorButtons();
+        int i = 0;
+        int columns = 4;
         for (CalculatorButton button : buttons) {
-            JButton jButton = new JButton(button.getTitle());
-            button.setButton(jButton);
+            button.setButton();
+            JButton jButton = button.getButton();
+            button.setSize();
             calculatorButtons.add(button);
-            jButton.setFont(new Font(fontName, Font.PLAIN, 20));
+            jButton.setFont(new Font(fontName, Font.PLAIN, 16));
 
             jButton.addActionListener(new ActionListener() {
                 @Override
@@ -97,9 +124,15 @@ public class Calculator extends JFrame {
                 }
             });
 
-            jButton.setBackground(button.getBackgroundColor());
             jButton.addActionListener(new ButtonClickListener(button));
-            keyboardPanel.add(jButton);
+            constraints.fill = GridBagConstraints.HORIZONTAL;
+            constraints.weightx = 0.5;
+            constraints.gridx = i % columns;
+            constraints.gridy = i / columns;
+            constraints.ipadx = 0;
+            keyboardPanel.add(jButton, constraints);
+
+            i++;
         }
         buttonPanel.add(keyboardPanel, BorderLayout.EAST);
     }
@@ -211,18 +244,30 @@ public class Calculator extends JFrame {
         buttons.add(new CalculatorButton("0", "0", new Color(135, 222, 184)));
         buttons.add(new CalculatorButton("=", "=", new Color(217, 137, 91)));
         buttons.add(new CalculatorButton("/", "/", new Color(150, 136, 186)));
+        buttons.add(new CalculatorButton("(", "(", new Color(200, 200, 200)));
+        buttons.add(new CalculatorButton(")", ")", new Color(200, 200, 200)));
+        buttons.add(new CalculatorButton(".", ".", new Color(200, 200, 200)));
+        buttons.add(new CalculatorButton("!", "!", new Color(200, 200, 200)));
+        buttons.add(new CalculatorButton("π", "pi",new Color(245, 135, 219)));
+        buttons.add(new CalculatorButton("e", "e",       new Color(245, 135, 219)));
+        buttons.add(new CalculatorButton("g", "[g]",       new Color(245, 135, 219)));
+        buttons.add(new CalculatorButton("φ", "[phi]",       new Color(245, 135, 219)));
         buttons.add(new CalculatorButton("x^y", "^",     new Color(150, 136, 186)));
         buttons.add(new CalculatorButton("x²", "^2",     new Color(150, 136, 186)));
         buttons.add(new CalculatorButton("sqrt", "sqrt", new Color(150, 136, 186)));
         buttons.add(new CalculatorButton("root", "^(1/", new Color(150, 136, 186)));
-        buttons.add(new CalculatorButton("(", "(",       new Color(200, 200, 200)));
-        buttons.add(new CalculatorButton(")", ")",       new Color(200, 200, 200)));
-        buttons.add(new CalculatorButton("π", "pi",      new Color(245, 135, 219)));
-        buttons.add(new CalculatorButton("e", "e",       new Color(245, 135, 219)));
         buttons.add(new CalculatorButton("sin", "sin",   new Color(239, 245, 135)));
         buttons.add(new CalculatorButton("cos", "cos",   new Color(239, 245, 135)));
         buttons.add(new CalculatorButton("tan", "tan",   new Color(239, 245, 135)));
         buttons.add(new CalculatorButton("ctg", "ctg", new Color(239, 245, 135)));
+        buttons.add(new CalculatorButton("asin", "asin",   new Color(239, 245, 135)));
+        buttons.add(new CalculatorButton("acos", "acos",   new Color(239, 245, 135)));
+        buttons.add(new CalculatorButton("atan", "atan",   new Color(239, 245, 135)));
+        buttons.add(new CalculatorButton("actg", "actg", new Color(239, 245, 135)));
+        buttons.add(new CalculatorButton("ln", "ln", new Color(135, 245, 179)));
+        buttons.add(new CalculatorButton("log10", "log10", new Color(135, 245, 179)));
+        buttons.add(new CalculatorButton("log2", "log2", new Color(135, 245, 179)));
+        buttons.add(new CalculatorButton("log", "log(_, _)", new Color(135, 245, 179)));
         return buttons;
     }
 
@@ -251,32 +296,6 @@ public class Calculator extends JFrame {
             calculator.setVisible(true);
         });
     }
-}
-
-class CalculatorButton {
-    private final String title;
-    private final String value;
-    private final Color backgroundColor;
-
-    private JButton button;
-
-    public CalculatorButton(String title, String value, Color backgroundColor) {
-        this.title = title;
-        this.value = value;
-        this.backgroundColor = backgroundColor;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-    public String getValue() {
-        return value;
-    }
-    public Color getBackgroundColor() {
-        return backgroundColor;
-    }
-    public void setButton(JButton button) { this.button = button; }
-    public JButton getButton() { return button; }
 }
 
 class HistoryToken{
