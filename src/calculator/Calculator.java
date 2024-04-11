@@ -13,8 +13,6 @@ public class Calculator extends JFrame {
     private JPanel keyboardPanel; // includes all keys of calculator, exluding ANS
     private JPanel buttonPanel; // includes keyboard panel and ansPanel
     private JPanel historyPanel;
-    private JScrollBar historyScrollBar;
-    private int historyScrollBarLastValue;
 
     private int historyFontSize = 25;
     private final String fontName = "Arial";
@@ -27,7 +25,6 @@ public class Calculator extends JFrame {
     public static final Calculator calculator = new Calculator();
 
     private void UpdateOnWindowResize(){
-        System.out.println(mainPanel.getWidth());
         if (mainPanel.getWidth() < 500){
             historyPanel.setPreferredSize(new Dimension(0, mainPanel.getHeight()));
             historyPanel.setVisible(false);
@@ -43,8 +40,6 @@ public class Calculator extends JFrame {
 
         textField.requestFocus();
         adjustHistoryPanel();
-
-        historyScrollBar.setBounds(this.getWidth() - 60, 0, 60, this.getHeight());
     }
     private void UpdateOnHistoryResize(){
         UpdateOnWindowResize();
@@ -74,7 +69,6 @@ public class Calculator extends JFrame {
     }
     public void UpdateHistoryScroll(int scrollValue){
         int shift = -scrollValue * historyFontSize;
-        System.out.println("Shift = " + shift);
         if (history.getFirst().getLabel().getY() + shift > 20) return;
         if (history.getLast().getLabel().getY() + shift < historyPanel.getHeight() - 20) return;
         for (HistoryToken token : history){
@@ -131,14 +125,8 @@ public class Calculator extends JFrame {
         historyPanel = new JPanel();
         historyPanel.setBackground(Color.LIGHT_GRAY);
         historyPanel.setPreferredSize(new Dimension(50, getHeight()));
+        historyPanel.setMinimumSize(new Dimension(0, 0));
         historyPanel.setLayout(new BoxLayout(historyPanel, BoxLayout.Y_AXIS));
-
-//        JTextArea textArea = new JTextArea();
-//        textArea.setText("12wqerdfio wlhgyfqwo;lekgidcyfukbhwksjdghcnjka chdsf;nxjsd han");
-//        historyPanel.add(textArea);
-//
-//        JScrollPane scroll = new JScrollPane(textArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-//        add(scroll);
 
         historyPanel.addMouseWheelListener(new MouseWheelListener() {
             @Override
@@ -146,19 +134,6 @@ public class Calculator extends JFrame {
                 calculator.UpdateHistoryScroll(e.getWheelRotation());
             }
         });
-
-        historyScrollBar = new JScrollBar();
-        historyScrollBar.setBounds(this.getWidth() - 60, 0, 60, this.getHeight());
-        int a = historyScrollBar.getMaximum();
-        historyScrollBar.addAdjustmentListener(new AdjustmentListener() {
-            @Override
-            public void adjustmentValueChanged(AdjustmentEvent e) {
-                calculator.UpdateHistoryScroll(historyScrollBarLastValue - e.getValue());
-                //System.out.println(a + " " + e.getValue());
-                historyScrollBarLastValue = e.getValue();
-            }
-        });
-        this.add(historyScrollBar);
 
         historyPanel.addComponentListener(new ComponentAdapter() {
             @Override
