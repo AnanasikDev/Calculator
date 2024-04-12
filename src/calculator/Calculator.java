@@ -69,8 +69,8 @@ public class Calculator extends JFrame {
     }
     public void UpdateHistoryScroll(int scrollValue){
         int shift = -scrollValue * historyFontSize;
-        if (history.getFirst().getLabel().getY() + shift > 20) return;
-        if (history.getLast().getLabel().getY() + shift < historyPanel.getHeight() - 20) return;
+        if (Utils.getFirst(history).getLabel().getY() + shift > 20) return;
+        if (Utils.getLast(history).getLabel().getY() + shift < historyPanel.getHeight() - 20) return;
         for (HistoryToken token : history){
             token.getLabel().setBounds(token.getLabel().getX(), token.getLabel().getY() + shift, token.getLabel().getWidth(), token.getLabel().getHeight());
         }
@@ -214,7 +214,7 @@ public class Calculator extends JFrame {
     private List<CalculatorButton> getCalculatorButtons() {
         List<CalculatorButton> buttons = new ArrayList<>();
         buttons.add(new CalculatorButton("=", "", new Color(217, 137, 91), true));
-        buttons.getLast().jButton.addActionListener(new ActionListener() {
+        Utils.getLast(buttons).jButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 evaluate();
@@ -222,7 +222,7 @@ public class Calculator extends JFrame {
         });
 
         buttons.add(new CalculatorButton("C", "", new Color(117, 117, 117), true));
-        buttons.getLast().jButton.addActionListener(new ActionListener() {
+        Utils.getLast(buttons).jButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 textField.setText("");
@@ -230,7 +230,7 @@ public class Calculator extends JFrame {
         });
 
         buttons.add(new CalculatorButton("del", "", new Color(117, 117, 117), true));
-        buttons.getLast().jButton.addActionListener(new ActionListener() {
+        Utils.getLast(buttons).jButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 textField.setText(textField.getText().isEmpty() ? "" : textField.getText().substring(0, textField.getText().length()-1) );
@@ -238,7 +238,7 @@ public class Calculator extends JFrame {
         });
 
         buttons.add(new CalculatorButton("ans", "", new Color(117, 117, 117), true));
-        buttons.getLast().jButton.addActionListener(new ActionListener() {
+        Utils.getLast(buttons).jButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 textField.setText(textField.getText() + (history.isEmpty() ? "" : history.get(history.size()-1).getValue()));
@@ -246,7 +246,7 @@ public class Calculator extends JFrame {
         });
 
         buttons.add(new CalculatorButton("last", "", new Color(117, 117, 117), true));
-        buttons.getLast().jButton.addActionListener(new ActionListener() {
+        Utils.getLast(buttons).jButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 textField.setText(textField.getText() + (history.isEmpty() ? "" : history.get(history.size()-1).getExpression()));
@@ -254,7 +254,7 @@ public class Calculator extends JFrame {
         });
 
         buttons.add(new CalculatorButton(solver.degMod ? "deg" : "rad", "", new Color(117, 117, 117), true));
-        buttons.getLast().jButton.addActionListener(new ActionListener() {
+        Utils.getLast(buttons).jButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 solver.setDegMod(!solver.degMod);
@@ -283,7 +283,7 @@ public class Calculator extends JFrame {
         buttons.add(new CalculatorButton(".", ".", new Color(135, 222, 184)));
         buttons.add(new CalculatorButton("0", "0", new Color(135, 222, 184)));
         buttons.add(new CalculatorButton("-", "", new Color(135, 222, 184), true));
-        buttons.getLast().jButton.addActionListener(new ActionListener() {
+        Utils.getLast(buttons).jButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 textField.setText("-(" + textField.getText() + ")");
