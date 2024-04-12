@@ -8,7 +8,8 @@
 ## Functionality
 
 - Basic arithmetic operations
-- Basic trigonometric functions
+- Basic trigonometric functions (with rad/deg switch)
+- Logarithms, factorials
 - Constants
 - "Answer" button
 - History panel
@@ -23,4 +24,4 @@
 
 ## Development context
 
-A fully functioning prototype was developed in November 2023 as a part of IB DP 1 Computer Science course in Letovo, Moscow. This version has not been updated since 2023.11.18
+A fully functioning prototype was developed in November 2023 as a part of IB DP 1 Computer Science course in Letovo, Moscow. In April 2024 this project has been revisioned and updated, with addition of new features and minor improvements.
